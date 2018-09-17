@@ -2,12 +2,18 @@
 #include <unordered_map>
 #include <fstream>
 
-typedef std::string (*pfunc)(std::string);
+typedef std::string (*pfunc)(std::ifstream &infile);
 
-std::string pyPrint(std::string s){
-  std::string sentence;
-  sentence = "print(\"" + s + "\")\n";
-  return sentence;
+
+std::string pyPrint(std::ifstream &infile){
+  std::string sentence = "print(\"";
+  std::string word;
+  while(infile >> word){
+    if(word == "end") break;
+    if(sentence == "print(\"") sentence += word;
+    else sentence = sentence + " " + word;
+  }
+  return sentence + "\")";
 }
 
 void setup(std::unordered_map<std::string, pfunc> &m){
@@ -19,27 +25,22 @@ int main(){
   setup(funcMap);
   std::string word = "";
   std::string sentence = "";
-  std::ifstream myfile;
+  std::ifstream infile;
   std::ofstream outfile;
   outfile.open("test.py");
-  myfile.open("test.txt");
-  if(myfile.is_open()){
-    while(myfile >> word){
-      if (funcMap.find(word) == funcMap.end()){
+  infile.open("test.txt");
+  if(infile.is_open()){
+    while(infile >> word){
+      auto key = funcMap.find(word);
+      if (key == funcMap.end()){
         outfile << word;
       }
       else{
-        pfunc f = funcMap[word];
-        while(myfile >> word){
-          if(word == "end") break;
-          if(sentence == "") sentence = word;
-          else sentence = sentence + " " + word;
-        }
-        outfile << (*f)(sentence);
+        outfile << (*(key->second))(infile);
       }
     }
-  }
-  myfile.close();
-  outfile.close();
 
+  infile.close();
+  outfile.close();
+  }
 }
