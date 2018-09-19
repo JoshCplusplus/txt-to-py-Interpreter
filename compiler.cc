@@ -5,6 +5,26 @@
 typedef std::string (*pfunc)(std::ifstream &infile);
 
 
+std::string pyEqual(std::ifstream &infile){
+  return " = ";
+}
+
+std::string pyIf(std::ifstream &infile){
+  std::string sentence;
+  std::string word;
+}
+
+std::string pyString(std::ifstream &infile){
+  std::string sentence;
+  std::string word;
+  while(infile >> word){
+    if(word == "end") break;
+    else sentence = sentence + word + " ";
+  }
+  sentence.resize(sentence.size()-1);
+  return "\"" + sentence + "\"";
+}
+
 std::string pyPrint(std::ifstream &infile){
   std::string sentence = "print(\"";
   std::string word;
@@ -13,11 +33,14 @@ std::string pyPrint(std::ifstream &infile){
     if(sentence == "print(\"") sentence += word;
     else sentence = sentence + " " + word;
   }
-  return sentence + "\")";
+  return sentence + "\")\n";
 }
 
 void setup(std::unordered_map<std::string, pfunc> &m){
   m["print"] = pyPrint;
+  m["equals"] = pyEqual;
+  m["if"] = pyIf;
+  m["string"] = pyString;
 }
 
 int main(){
