@@ -1,4 +1,4 @@
-# txt-to-py-Compiler
+# txt-to-py-Interpretor 
 A compiler which converts text file pseudo code into python code. 
 E.g. 
 input(.txt): print hello world in python
